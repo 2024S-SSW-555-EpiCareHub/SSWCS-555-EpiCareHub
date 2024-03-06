@@ -22,7 +22,7 @@ router
         message: error.message,
         success: false,
       };
-      return res.status(404).json(result);
+      return res.status(400).json(result);
     }
 
     try {
@@ -39,7 +39,7 @@ router
         message : "Patient added succesfully",
         success : true
       };
-      return res.json(result);
+      return res.status(201).json(result);
     } catch (error) {
       const result = {
         patientAdded: null,
