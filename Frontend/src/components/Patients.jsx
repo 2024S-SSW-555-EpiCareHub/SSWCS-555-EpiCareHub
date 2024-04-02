@@ -10,6 +10,58 @@ import axios from "axios";
 import PatientForm from "./PatientForm";
 import { useNavigate } from "react-router-dom";
 
+const CustomDialog = ({
+  isFile,
+  selectedPatient,
+  visible,
+  onClose,
+  onSubmit,
+  handleFileChange,
+  handleFileSubmit,
+}) => {
+  return (
+    <Dialog
+      header={
+        isFile
+          ? "Upload EEG Data"
+          : selectedPatient
+          ? "Edit Patient"
+          : "Add Patient"
+      }
+      visible={visible}
+      onHide={onClose}
+    >
+      {isFile ? (
+        <div className="mt-4">
+          <label
+            htmlFor="fileInput"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Upload EDF/MAT File
+          </label>
+          <input
+            id="fileInput"
+            name="fileInput"
+            type="file"
+            accept=".edf, .mat"
+            onChange={handleFileChange}
+            className="mt-4 block w-full px-3 py-2 border border-eh-4 rounded-md shadow-sm focus:outline-none focus:ring-eh-3 focus:border-eh-3 sm:text-sm"
+          />
+          <button
+            className="bg-eh-4 hover:bg-eh-3 text-white font-bold py-2 px-4 rounded"
+            type="button"
+            onClick={handleFileSubmit}
+          >
+            Submit File
+          </button>
+        </div>
+      ) : (
+        <PatientForm patient={selectedPatient} onSubmit={onSubmit} />
+      )}
+    </Dialog>
+  );
+};
+
 const Patients = () => {
   const [data, setData] = useState([]);
   const [visible, setVisible] = useState(false);
@@ -192,45 +244,15 @@ const Patients = () => {
         onDeleteClick={handleDeleteClick}
         onUploadClick={handleUploadClick}
       />
-      <Dialog
-        header={
-          isFile
-            ? "Upload EEG Data"
-            : selectedPatient
-            ? "Edit Patient"
-            : "Add Patient"
-        }
+      <CustomDialog
+        isFile={isFile}
+        selectedPatient={selectedPatient}
         visible={visible}
-        onHide={() => setVisible(false)}
-      >
-        {isFile ? (
-          <div className="mt-4">
-            <label
-              htmlFor="fileInput"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Upload EDF/MAT File
-            </label>
-            <input
-              id="fileInput"
-              name="fileInput"
-              type="file"
-              accept=".edf, .mat"
-              onChange={handleFileChange}
-              className="mt-4 block w-full px-3 py-2 border border-eh-4 rounded-md shadow-sm focus:outline-none focus:ring-eh-3 focus:border-eh-3 sm:text-sm"
-            />
-            <button
-              className="bg-eh-4 hover:bg-eh-3 text-white font-bold py-2 px-4 rounded"
-              type="button"
-              onClick={handleFileSubmit}
-            >
-              Submit File
-            </button>
-          </div>
-        ) : (
-          <PatientForm patient={selectedPatient} onSubmit={handleSubmit} />
-        )}
-      </Dialog>
+        onClose={() => setVisible(false)}
+        onSubmit={handleSubmit}
+        handleFileChange={handleFileChange}
+        handleFileSubmit={handleFileSubmit}
+      />
       <Snackbar
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         open={open}
